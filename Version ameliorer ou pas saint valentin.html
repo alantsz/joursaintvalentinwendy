@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sois ma Valentine ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Animation douce du background */
+        .bg-heart {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.4);
+            animation: float 6s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+
+        /* LA CARTE */
+        .card {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            padding: 40px;
+            text-align: center;
+            width: 350px;
+            height: 480px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        h1 {
+            font-family: 'Great Vibes', cursive;
+            color: #d63384;
+            font-size: 3rem;
+            margin: 0;
+        }
+
+        p {
+            color: #555;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        /* Style spécifique pour le P.S. */
+        .ps-text {
+            font-size: 0.8rem;
+            color: #777;
+            font-style: italic;
+            margin-top: 25px;
+            margin-bottom: 0;
+        }
+
+        /* Mise à jour du style pour accepter img-container */
+        .img-container img {
+            width: 140px; /* Ajuste cette taille si tes images sont trop grandes */
+            height: auto;
+            max-height: 150px; /* Empêche l'image de prendre trop de place */
+            border-radius: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            object-fit: cover; /* Recadre proprement si l'image n'est pas carrée */
+        }
+
+        /* CONTENEUR DES BOUTONS */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            height: 50px;
+            position: static;
+        }
+
+        button {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            z-index: 100;
+        }
+
+        .btn-yes {
+            background-color: #ff6b81;
+            color: white;
+        }
+        .btn-yes:hover {
+            background-color: #ff4757;
+            transform: scale(1.05);
+        }
+
+        .btn-no {
+            background-color: white;
+            color: #ff6b81;
+            position: relative;
+            transition: all 0.3s ease-out;
+        }
+
+        .success-message {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            justify-content: center;
+        }
+        
+        .success-text {
+            font-size: 1.4rem;
+            color: #d63384;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="hearts-container"></div>
+
+    <div class="card" id="mainCard">
+        
+        <div id="question-section" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+            <div class="img-container">
+                <img src="cutcat.jpg" alt="Cute Cat">
+            </div>
+            <h1>Pour toi...</h1>
+            <p>Veux-tu être ma Valentine ? 🌹</p>
+            
+            <div class="btn-container">
+                <button class="btn-yes" onclick="acceptLove()">OUI ❤️</button>
+                <button class="btn-no" id="noBtn" onmouseover="moveButton()" onclick="moveButton()">NON 💔</button>
+            </div>
+
+            <p class="ps-text">P.S : Attention le bouton non est un peu timide... 🤭</p>
+        </div>
+
+        <div id="success-section" class="success-message">
+            <div class="img-container">
+                <img src="cutchild.jpg" alt="Happy Child">
+            </div>
+            <h1>Yeeeees ! ❤️</h1>
+            <div class="success-text">Je savais que tu dirais oui !</div>
+            <p style="font-size: 0.8rem; margin-top: 10px;">(C'était le seul choix possible 😎)</p>
+        </div>
+    </div>
+
+    <script>
+        // Cœurs background
+        function createHearts() {
+            const container = document.getElementById('hearts-container');
+            const symbols = ['❤️', '💖', '🌸'];
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('bg-heart');
+                heart.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 3 + 5) + 's';
+                heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                container.appendChild(heart);
+            }
+        }
+        createHearts();
+
+        // --- FONCTION DE DÉPLACEMENT LIMITÉE À LA CARTE ---
+        function moveButton() {
+            const noBtn = document.getElementById('noBtn');
+            const card = document.getElementById('mainCard');
+
+            // Dès qu'on touche le bouton, il passe en absolute pour pouvoir bouger
+            noBtn.style.position = 'absolute';
+
+            // Dimensions de la carte (la zone autorisée)
+            const cardWidth = card.clientWidth;
+            const cardHeight = card.clientHeight;
+
+            // Dimensions du bouton
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
+
+            // On calcule une position aléatoire MAIS qui reste DANS la carte
+            const maxLeft = cardWidth - btnWidth - 20;
+            const maxTop = cardHeight - btnHeight - 20;
+
+            const newLeft = Math.floor(Math.random() * maxLeft);
+            const newTop = Math.floor(Math.random() * maxTop);
+
+            // Appliquer les nouvelles coordonnées
+            noBtn.style.left = newLeft + 'px';
+            noBtn.style.top = newTop + 'px';
+        }
+
+        function acceptLove() {
+            document.getElementById('question-section').style.display = 'none';
+            document.getElementById('success-section').style.display = 'flex';
+            
+            // Pluie de confettis
+            var duration = 3 * 1000;
+            var end = Date.now() + duration;
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#ff6b81', '#ff9a9e']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#ff6b81', '#ff9a9e']
+                });
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+    </script>
+</body>
+</html>
